@@ -116,3 +116,8 @@ body {
   border-radius: 3px;
   padding: 6px 10px;
 }
+
+.footer button.active {
+  opacity: 1;
+  pointer-events: auto;
+}

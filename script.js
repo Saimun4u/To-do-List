@@ -1,62 +1,68 @@
+// getting all required elements
 const inputBox = document.querySelector('.inputField input');
 const addBtn = document.querySelector('.inputField button');
-const toList = document.querySelector('.todoList');
+const todoList = document.querySelector('.todoList');
+const deleteAllBtn = document.querySelector('.footer button');
 
+// onkeyup event
 inputBox.onkeyup = () => {
-  let userData = inputBox.value; //getting user entered value
-  if (userData.trim() != 0) {
-    //if user values aren't only spaces
-    addBtn.classList.add('active'); //activate the add button
+  let userEnteredValue = inputBox.value; //getting user entered value
+  if (userEnteredValue.trim() != 0) {
+    //if the user value isn't only spaces
+    addBtn.classList.add('active'); //active the add button
   } else {
-    addBtn.classList.remove('active'); //unactivate the add button
+    addBtn.classList.remove('active'); //unactive the add button
   }
 };
-
-showTasks(); //Calling showTasks function
-
-// Set local storage once add button is clicked
-
+showTasks(); //calling showTask function
 addBtn.onclick = () => {
-  let userData = inputBox.value; //getting user entered value
-  // localStorage.clear(); //reset local storage
-  let getLocalStorage = localStorage.getItem('New Todo'); //getting localstorage
-  if (getLocalStorage == null) {
-    //if localstorage is null
-    listArr = []; // creating blank array
+  //when user click on plus icon button
+  let userEnteredValue = inputBox.value; //getting input field value
+  let getLocalStorageData = localStorage.getItem('New Todo'); //getting localstorage
+  if (getLocalStorageData == null) {
+    //if localstorage has no data
+    listArray = []; //create a blank array
   } else {
-    listArr = JSON.parse(getLocalStorage); //transforming json string into a js object
+    listArray = JSON.parse(getLocalStorageData); //transforming json string into a js object
   }
-  listArr.push(userData); // pushing or adding user data
-  localStorage.setItem('New Todo', JSON.stringify(listArr)); // transforming js object into a json string
-  showTasks(); //calling showTasks function
+  listArray.push(userEnteredValue); //pushing or adding new value in array
+  localStorage.setItem('New Todo', JSON.stringify(listArray)); //transforming js object into a json string
+  showTasks(); //calling showTask function
+  addBtn.classList.remove('active'); //unactive the add button once the task added
 };
-
-// Function to add task list inside ul
-
 function showTasks() {
-  let getLocalStorage = localStorage.getItem('New Todo'); //getting localstorage
-  if (getLocalStorage == null) {
-    //if localstorage is null
-    listArr = []; // creating blank array
+  let getLocalStorageData = localStorage.getItem('New Todo');
+  if (getLocalStorageData == null) {
+    listArray = [];
   } else {
-    listArr = JSON.parse(getLocalStorage); //transforming json string into a js object
+    listArray = JSON.parse(getLocalStorageData);
+  }
+  const pendingTasksNumb = document.querySelector('.pendingTasks');
+  // pendingTasksNumb.textContent = listArray.length; //passing the array length in pendingtask
+  if (listArray.length > 0) {
+    //if array length is greater than 0
+    deleteAllBtn.classList.add('active'); //active the delete button
+  } else {
+    deleteAllBtn.classList.remove('active'); //unactive the delete button
   }
   let newLiTag = '';
-  listArr.forEach((element, index) => {
-    newLiTag += `<li> ${element}
-    <span onclick="deleteTask(${index})"><i class="fas fa-trash"></i></span>
-  </li>`;
+  listArray.forEach((element, index) => {
+    newLiTag += `<li>${element}<span class="icon" onclick="deleteTask(${index})"><i class="fas fa-trash"></i></span></li>`;
   });
-  toList.innerHTML = newLiTag; // adding an new li tagg inside ul tag
-  inputBox.value = ''; //once taks added leve the input field blank
+  todoList.innerHTML = newLiTag; //adding new li tag inside ul tag
+  inputBox.value = ''; //once task added leave the input field blank
 }
-
-// Delete task function
+// delete task function
 function deleteTask(index) {
-  let getLocalStorage = localStorage.getItem('New Todo');
-  listArr = JSON.parse(getLocalStorage);
-  listArr.splice(index, 1); //delete or remove the particular index li
-  // After removing the li again update the local storage
-  localStorage.setItem('New Todo', JSON.stringify(listArr)); // transforming js object into a json string
-  showTasks(); //calling showTasks function
+  let getLocalStorageData = localStorage.getItem('New Todo');
+  listArray = JSON.parse(getLocalStorageData);
+  listArray.splice(index, 1); //delete or remove the li
+  localStorage.setItem('New Todo', JSON.stringify(listArray));
+  showTasks(); //call the showTasks function
 }
+// delete all tasks function
+deleteAllBtn.onclick = () => {
+  listArray = []; //empty the array
+  localStorage.setItem('New Todo', JSON.stringify(listArray)); //set the item in localstorage
+  showTasks(); //call the showTasks function
+};
